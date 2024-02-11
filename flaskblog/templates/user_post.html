@@ -1,0 +1,46 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="mb-3">Posts by {{ user.username }} ({{ posts.total }})</h1>
+{% for post in posts.items %}
+<article class="media content-section">
+    <div class="row align-items-start">
+        <div class="col-md-2 text-center align-self-start"> <!-- Adjust column size and alignment -->
+            <img class="rounded-circle article-img"
+                src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}"
+                style="width: 100px; height: 100px; margin-top: 5px;">
+            <!-- Set equal width and height and add margin-top -->
+        </div>
+        <div class="col-md-10">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{{ url_for('user_post', username=post.author.username) }}">{{
+                        post.author.username
+                        }}</a>
+                    <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <h2><a class="article-title" href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a></h2>
+                {% if post.content|length > 500 %}
+                <p class="article-content" style="max-width: 100%; overflow-wrap: break-word;">{{ post.content[:500]
+                    }}...</p>
+                <a href="{{ url_for('post', post_id=post.id) }}">Read more</a>
+                {% else %}
+                <p class="article-content" style="max-width: 100%; overflow-wrap: break-word;">{{ post.content }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</article>
+{% endfor %}
+{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+{% if page_num %}
+{% if posts.page == page_num %}
+<a class="btn btn-info mb-4" href="{{ url_for('user_post', username=user.username, page=page_num) }}">{{ page_num }}</a>
+{% else %}
+<a class="btn btn-outline-info mb-4" href="{{ url_for('user_post', username=user.username, page=page_num) }}">{{
+    page_num }}</a>
+{% endif %}
+{% else %}
+...
+{% endif %}
+{% endfor %}
+{% endblock content %}
