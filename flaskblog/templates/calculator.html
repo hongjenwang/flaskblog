@@ -1,0 +1,120 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- Calculator -->
+<div class="calculator">
+    <input type="text" id="result" readonly>
+    <div class="buttons">
+        <button class="number" onclick="appendNumber(7)">7</button>
+        <button class="number" onclick="appendNumber(8)">8</button>
+        <button class="number" onclick="appendNumber(9)">9</button>
+        <button class="operator" onclick="clearResult()">C</button>
+    </div>
+    <div class="buttons">
+        <button class="number" onclick="appendNumber(4)">4</button>
+        <button class="number" onclick="appendNumber(5)">5</button>
+        <button class="number" onclick="appendNumber(6)">6</button>
+        <button class="operator" onclick="appendOperator('+')">+</button>
+    </div>
+    <div class="buttons">
+        <button class="number" onclick="appendNumber(1)">1</button>
+        <button class="number" onclick="appendNumber(2)">2</button>
+        <button class="number" onclick="appendNumber(3)">3</button>
+        <button class="operator" onclick="appendOperator('-')">-</button>
+    </div>
+    <div class="buttons">
+        <button class="number" onclick="appendNumber(0)">0</button>
+        <button class="operator" onclick="appendOperator('*')">*</button>
+        <button class="operator" onclick="appendOperator('/')">/</button>
+        <button class="equal" onclick="calculateResult()">=</button>
+    </div>
+</div>
+
+<script>
+    let expression = '';
+
+    function appendNumber(number) {
+        expression += number;
+        document.getElementById('result').value = expression;
+    }
+
+    function appendOperator(operator) {
+        expression += operator;
+        document.getElementById('result').value = expression;
+    }
+
+    function calculateResult() {
+        try {
+            const result = eval(expression);
+            document.getElementById('result').value = result;
+            expression = result.toString();
+        } catch (error) {
+            document.getElementById('result').value = 'Error';
+            expression = '';
+        }
+    }
+
+    function clearResult() {
+        expression = '';
+        document.getElementById('result').value = '';
+    }
+</script>
+
+<style>
+    .calculator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 300px;
+        margin: 20px auto;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    #result {
+        width: 90%;
+        margin-bottom: 10px;
+        padding: 10px;
+        font-size: 18px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: right;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+
+    button {
+        width: 50px;
+        height: 50px;
+        margin: 0 5px;
+        padding: 10px;
+        font-size: 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .number {
+        background-color: #f2f2f2;
+    }
+
+    .operator {
+        background-color: #d9d9d9;
+    }
+
+    .equal {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    button:hover {
+        background-color: #e6e6e6;
+    }
+</style>
+{% endblock content %}

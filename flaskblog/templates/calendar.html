@@ -1,0 +1,168 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="calendar">
+    <h1>Calendar</h1>
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button id="prev-btn">&lt;</button>
+            <h2 id="month-year"></h2>
+            <button id="next-btn">&gt;</button>
+        </div>
+        <table id="calendar-table">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* CSS styles for the calendar */
+    /* Add your custom CSS styles here */
+    .calendar {
+        font-family: Arial, sans-serif;
+        margin: 20px auto;
+        max-width: 600px;
+    }
+
+    .calendar h1,
+    .calendar h2 {
+        text-align: center;
+    }
+
+    .calendar-container {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .calendar-header button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    #month-year {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    #calendar-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    #calendar-table th,
+    #calendar-table td {
+        padding: 5px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    #calendar-table th {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    #calendar-table td {
+        cursor: pointer;
+    }
+
+    #calendar-table td:hover {
+        background-color: #f2f2f2;
+    }
+
+    .today {
+        background-color: #007bff;
+        color: #fff;
+    }
+</style>
+
+<script>
+    // JavaScript code for generating calendar
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarBody = document.getElementById('calendar-body');
+        const monthYearText = document.getElementById('month-year');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        const today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+
+        function generateCalendar() {
+            calendarBody.innerHTML = '';
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+
+            monthYearText.textContent = `${new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} ${currentYear}`;
+
+            let date = 1;
+
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement('tr');
+
+                for (let j = 0; j < 7; j++) {
+                    if (i === 0 && j < firstDayOfMonth) {
+                        const cell = document.createElement('td');
+                        row.appendChild(cell);
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        const cell = document.createElement('td');
+                        cell.textContent = date;
+                        row.appendChild(cell);
+                        date++;
+
+                        if (currentYear === today.getFullYear() && currentMonth === today.getMonth() && date - 1 === today.getDate()) {
+                            cell.classList.add('today');
+                        }
+                    }
+                }
+
+                calendarBody.appendChild(row);
+            }
+        }
+
+        prevBtn.addEventListener('click', function () {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar();
+        });
+
+        nextBtn.addEventListener('click', function () {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar();
+        });
+
+        generateCalendar();
+    });
+</script>
+{% endblock content %}

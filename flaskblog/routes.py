@@ -140,3 +140,11 @@ def user_post(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user).order_by(desc(Post.id)).paginate(page=page, per_page=5)
     return render_template('user_post.html', posts=posts, user=user)
+
+@app.route("/calendar")
+def calendar():
+    return render_template("calendar.html")
+
+@app.route("/calculator")
+def calculator():
+    return render_template("calculator.html")
