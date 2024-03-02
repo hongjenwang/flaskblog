@@ -4,10 +4,11 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort, url_for
 from flaskblog import app, db, bcrypt, mail
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, RequestResetForm, ResetPasswordForm
-from flaskblog.models import User, Post
+from flaskblog.models import User, Post, Comment
 from flask_login import login_user, current_user, logout_user, login_required
 from sqlalchemy import desc
 from flask_mail import Message
+from datetime import datetime
 
 @app.route("/")
 @app.route("/home")
@@ -104,7 +105,7 @@ def new_post():
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    return render_template('post.html', title=post.title, post=post)
+    return render_template('post.html', title=post.title, post=post, datetime=datetime, user=current_user)
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
@@ -180,6 +181,24 @@ def reset_token(token):
         flash(f'Your password has been updated! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+
+@app.route("/create-comment/<post_id>", methods=['GET', 'POST'])
+@login_required
+def create_comment(post_id):
+    text = request.form.get('text')
+
+    if not text:
+        flash(f'Please write something in the comment!', 'warning')
+    else:
+        post = Post.query.get(post_id)
+        if post:
+            comment = Comment(content=text, user_id=current_user.id, post_id=post_id)
+            db.session.add(comment)
+            db.session.commit()
+        else:
+            flash(f'post does not exist', 'warning')
+
+    return redirect(url_for('post', post_id=post_id))
 
 @app.route("/calendar")
 def calendar():

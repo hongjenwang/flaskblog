@@ -18,13 +18,48 @@
                     <div>
                         <a class="btn btn-secondary btn-sm mt-1 mb-1"
                             href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
-                        <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal"
+                        <button type="button" class="btn btn-danger btn-xs m-1" data-bs-toggle="modal"
                             data-bs-target="#deleteModal">DELETE</button>
                     </div>
                     {% endif %}
                 </div>
                 <h2 class="article-title">{{ post.title }}</h2>
                 <p class="article-content" style="max-width: 100%; overflow-wrap: break-word;">{{ post.content }}</p>
+            </div>
+        </div>
+        <div>
+            <div>
+                {% if post.comments %}
+                <h3>Comments:</h3>
+                {% endif %}
+                {% for comment in post.comments %}
+                <div class="row align-items-start"> <!-- Added align-items-start -->
+                    <div class="col-md-8"> <!-- Adjusted column width -->
+                        <div>
+                            <a href="/user/{{comment.author.username}}">{{comment.author.username}}:</a>
+                            {{comment.content}}
+                        </div>
+                    </div>
+                    <div class="col-md-4"> <!-- Adjusted column width -->
+                        <div class="d-flex justify-content-end"> <!-- Added justify-content-end -->
+                            <small class="text-muted">{{ comment.date_posted.strftime('%Y-%m-%d %H:%M:%S') }}</small>
+                            {% if user.is_authenticated %}
+                            {% if user.id == comment.user_id or user.id == post.user_id %}
+                            <div class="btn-group ms-2"> <!-- Added ms-2 -->
+                                <button type="button" class="btn btn-xs btn-primary dropdown-toggle"
+                                    data-bs-toggle="dropdown"></button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="/delete-comment/{{ comment.id }}" class="dropdown-item">Delete</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -49,4 +84,8 @@
         </div>
     </div>
 </div>
+<form class="input-group mb-3" method="POST" action="/create-comment/{{post.id}}">
+    <input type="text" id="text" name="text" class="form-control" placeholder="Comment something!" />
+    <button type="submit" class="btn btn-primary">Comment</button>
+</form>
 {% endblock content %}
