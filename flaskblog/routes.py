@@ -200,6 +200,23 @@ def create_comment(post_id):
 
     return redirect(url_for('post', post_id=post_id))
 
+@app.route("/delete-comment/<comment_id>", methods=['GET'])
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get(comment_id)
+    if comment:
+        if comment.author or comment.author == current_user:
+            db.session.delete(comment)
+            db.session.commit()
+            flash('Your comment has been deleted!', 'success')
+        else:
+            flash('You do not have permission to delete this comment.', 'danger')
+    else:
+        flash('Comment not found.', 'danger')
+
+    # Redirect to the post page with the corresponding post_id
+    return redirect(url_for('post', post_id=comment.post_id))
+
 @app.route("/calendar")
 def calendar():
     return render_template("calendar.html")
